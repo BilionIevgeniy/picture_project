@@ -10,7 +10,7 @@ const modals = () => {
   );
   bindModal(".fixed-gift", ".popup-gift", ".popup-gift .popup-close", true);
   openByScroll(".fixed-gift");
-  // showModalByTime('.popup-consultation', 5000);
+  // showModalByTime(".popup-consultation", 5000);
 };
 
 function bindModal(
@@ -96,7 +96,7 @@ function openByScroll(selector) {
 
     if (
       !btnPressed &&
-      window.pageYOffset + document.documentElement.clientHeight >= scrollHeight
+      window.scrollY + document.documentElement.clientHeight >= scrollHeight
     ) {
       document.querySelector(selector).click();
     }
