@@ -1,13 +1,13 @@
 const checkTextInputs = (selector) => {
-    const txtInputs = document.querySelectorAll(selector);
+  const txtInputs = document.querySelectorAll(selector);
 
-    txtInputs.forEach(input => {
-        input.addEventListener('keypress', function(e) {
-            if (e.key.match(/[^а-яё 0-9]/ig)) {
-                e.preventDefault();
-            }
-        });
+  txtInputs.forEach((input) => {
+    input.addEventListener("keypress", function (e) {
+      if (e.key.match(/[^a-zA-Z 0-9]/gi)) {
+        e.preventDefault();
+      }
     });
+  });
 };
 
 export default checkTextInputs;
