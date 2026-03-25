@@ -759,7 +759,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const sliders = (slideSelector, direction, prevSelector, nextSelector) => {
   const slides = document.querySelectorAll(slideSelector);
-  const interval = false;
+  let interval = false;
   let slideIndex = 1;
   showSlide(slideIndex, slides);
   addBtnsEventListeners(prevSelector, nextSelector, slides);

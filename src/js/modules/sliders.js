@@ -1,6 +1,6 @@
 const sliders = (slideSelector, direction, prevSelector, nextSelector) => {
   const slides = document.querySelectorAll(slideSelector);
-  const interval = false;
+  let interval = false;
   let slideIndex = 1;
   showSlide(slideIndex, slides);
   addBtnsEventListeners(prevSelector, nextSelector, slides);
