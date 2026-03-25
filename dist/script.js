@@ -757,62 +757,70 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-const sliders = (slides, dir, prev, next) => {
-  // let slideIndex = 1,
-  //   paused = false;
-  // const items = document.querySelectorAll(slides);
-  // function showSlides(n) {
-  //   if (n > items.length) {
-  //     slideIndex = 1;
-  //   }
-  //   if (n < 1) {
-  //     slideIndex = items.length;
-  //   }
-  //   items.forEach((item) => {
-  //     item.classList.add("animated");
-  //     item.style.display = "none";
-  //   });
-  //   items[slideIndex - 1].style.display = "block";
-  // }
-  // showSlides(slideIndex);
-  // function plusSlides(n) {
-  //   showSlides((slideIndex += n));
-  // }
-  // try {
-  //   const prevBtn = document.querySelector(prev),
-  //     nextBtn = document.querySelector(next);
-  //   prevBtn.addEventListener("click", () => {
-  //     plusSlides(-1);
-  //     items[slideIndex - 1].classList.remove("slideInLeft");
-  //     items[slideIndex - 1].classList.add("slideInRight");
-  //   });
-  //   nextBtn.addEventListener("click", () => {
-  //     plusSlides(1);
-  //     items[slideIndex - 1].classList.remove("slideInRight");
-  //     items[slideIndex - 1].classList.add("slideInLeft");
-  //   });
-  // } catch (e) {}
-  // function activateAnimation() {
-  //   if (dir === "vertical") {
-  //     paused = setInterval(function () {
-  //       plusSlides(1);
-  //       items[slideIndex - 1].classList.add("slideInDown");
-  //     }, 3000);
-  //   } else {
-  //     paused = setInterval(function () {
-  //       plusSlides(1);
-  //       items[slideIndex - 1].classList.remove("slideInRight");
-  //       items[slideIndex - 1].classList.add("slideInLeft");
-  //     }, 3000);
-  //   }
-  // }
-  // activateAnimation();
-  // items[0].parentNode.addEventListener("mouseenter", () => {
-  //   clearInterval(paused);
-  // });
-  // items[0].parentNode.addEventListener("mouseleave", () => {
-  //   activateAnimation();
-  // });
+const sliders = (slideSelector, direction, prevSelector, nextSelector) => {
+  const slides = document.querySelectorAll(slideSelector);
+  const interval = false;
+  let slideIndex = 1;
+  showSlide(slideIndex, slides);
+  addBtnsEventListeners(prevSelector, nextSelector, slides);
+  activateAnimation(slides, direction);
+  addSlideEventListeners(slides, direction);
+  function showSlide(index) {
+    if (index > slides.length) {
+      slideIndex = 1;
+    }
+    if (index < 1) {
+      slideIndex = slides.length;
+    }
+    slides.forEach(slide => {
+      slide.classList.add("animated");
+      slide.style.display = "none";
+    });
+    slides[slideIndex - 1].style.display = "block";
+  }
+  function nextSlide(n) {
+    showSlide(slideIndex += n);
+  }
+  function activateAnimation(direction) {
+    if (direction === "vertical") {
+      interval = setInterval(function () {
+        nextSlide(1);
+        slides[slideIndex - 1].classList.add("slideInDown");
+      }, 3000);
+    } else {
+      interval = setInterval(function () {
+        nextSlide(1);
+        slides[slideIndex - 1].classList.remove("slideInRight");
+        slides[slideIndex - 1].classList.add("slideInLeft");
+      }, 3000);
+    }
+  }
+  function addBtnsEventListeners(prevSelector, nextSelector) {
+    try {
+      const prevBtn = document.querySelector(prevSelector),
+        nextBtn = document.querySelector(nextSelector);
+      prevBtn.addEventListener("click", () => {
+        nextSlide(-1);
+        slides[slideIndex - 1].classList.remove("slideInLeft");
+        slides[slideIndex - 1].classList.add("slideInRight");
+      });
+      nextBtn.addEventListener("click", () => {
+        nextSlide(1);
+        slides[slideIndex - 1].classList.remove("slideInRight");
+        slides[slideIndex - 1].classList.add("slideInLeft");
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+  function addSlideEventListeners(direction) {
+    slides[0].parentNode.addEventListener("mouseenter", () => {
+      clearInterval(interval);
+    });
+    slides[0].parentNode.addEventListener("mouseleave", () => {
+      activateAnimation(direction);
+    });
+  }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (sliders);
 
@@ -947,7 +955,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   (0,_modules_modals__WEBPACK_IMPORTED_MODULE_0__["default"])();
   (0,_modules_sliders__WEBPACK_IMPORTED_MODULE_1__["default"])(".feedback-slider-item", "horizontal", ".main-prev-btn", ".main-next-btn");
-  (0,_modules_sliders__WEBPACK_IMPORTED_MODULE_1__["default"])(".main-slider-item", "vertical");
+  // sliders(".main-slider-item", "vertical");
   (0,_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])();
   (0,_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])('[name="phone"]');
   (0,_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="name"]');
