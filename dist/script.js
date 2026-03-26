@@ -426,43 +426,77 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/**
+ * Applies a phone number mask to input fields matching the selector.
+ * The mask format is "+4 (___) ___ __ __" for Russian phone numbers.
+ * @param {string} selector - CSS selector for input elements to apply the mask to.
+ */
 const mask = selector => {
-  let setCursorPosition = (pos, elem) => {
-    elem.focus();
-    if (elem.setSelectionRange) {
-      elem.setSelectionRange(pos, pos);
-    } else if (elem.createTextRange) {
-      let range = elem.createTextRange();
+  // Phone number mask template
+  const PHONE_MASK = "+4 (___) ___ __ __";
+  // Default digits to use when input is incomplete
+  const DEFAULT_DIGITS = "4";
+
+  /**
+   * Sets the cursor position in the input element.
+   * @param {number} position - The position to set the cursor to.
+   * @param {HTMLElement} element - The input element.
+   */
+  const setCursorPosition = (position, element) => {
+    element.focus();
+    if (element.setSelectionRange) {
+      element.setSelectionRange(position, position);
+    } else if (element.createTextRange) {
+      const range = element.createTextRange();
       range.collapse(true);
-      range.moveEnd("character", pos);
-      range.moveStart("character", pos);
+      range.moveEnd("character", position);
+      range.moveStart("character", position);
       range.select();
     }
   };
-  function createMask(event) {
-    let matrix = "+7 (___) ___ __ __",
-      i = 0,
-      def = matrix.replace(/\D/g, ""),
-      val = this.value.replace(/\D/g, "");
-    if (def.length >= val.length) {
-      val = def;
+
+  /**
+   * Applies the mask to the input value based on the event type.
+   * @param {Event} event - The input event.
+   */
+  const applyMask = event => {
+    const input = event.target;
+    const digitsOnly = input.value.replace(/\D/g, "");
+    let maskedValue = digitsOnly;
+
+    // If fewer digits than default, use default
+    if (digitsOnly.length <= DEFAULT_DIGITS.length) {
+      maskedValue = DEFAULT_DIGITS;
     }
-    this.value = matrix.replace(/./g, function (a) {
-      return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? "" : a;
+
+    // Apply the mask
+    let digitIndex = 0;
+    input.value = PHONE_MASK.replace(/./g, char => {
+      if (/[_\d]/.test(char) && digitIndex < maskedValue.length) {
+        return maskedValue.charAt(digitIndex++);
+      } else if (digitIndex >= maskedValue.length) {
+        return "";
+      }
+      return char;
     });
+
+    // Handle blur event: clear if only default prefix
     if (event.type === "blur") {
-      if (this.value.length == 2) {
-        this.value = "";
+      if (input.value === "+4") {
+        input.value = "";
       }
     } else {
-      setCursorPosition(this.value.length, this);
+      // Set cursor to end of input
+      setCursorPosition(input.value.length, input);
     }
-  }
-  let inputs = document.querySelectorAll(selector);
+  };
+
+  // Select and bind event listeners to inputs
+  const inputs = document.querySelectorAll(selector);
   inputs.forEach(input => {
-    input.addEventListener("input", createMask);
-    input.addEventListener("focus", createMask);
-    input.addEventListener("blur", createMask);
+    input.addEventListener("input", applyMask);
+    input.addEventListener("focus", applyMask);
+    input.addEventListener("blur", applyMask);
   });
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (mask);
