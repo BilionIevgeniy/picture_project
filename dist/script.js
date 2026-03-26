@@ -293,6 +293,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
+/* harmony import */ var _modals__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modals */ "./src/js/modules/modals.js");
+
 
 const message = {
   loading: "Loading...",
@@ -351,6 +353,7 @@ function sentData(form, sentStatus, clearInputs) {
       form.style.display = "block";
       form.classList.remove("fadeOutUp");
       form.classList.add("fadeInUp");
+      (0,_modals__WEBPACK_IMPORTED_MODULE_1__.resetModal)();
     }, 5000);
   });
 }
@@ -359,7 +362,7 @@ function getUrl(form) {
     designer: "assets/server.php",
     question: "assets/question.php"
   };
-  return form.closest(".popup-design") || form.classList.contains("calc_form") ? api = path.designer : api = path.question;
+  return form.closest(".popup-design") || form.classList.contains("calc_form") ? path.designer : path.question;
 }
 function createSentStatus() {
   let statusText = createTextMessage();
@@ -478,10 +481,12 @@ const mask = selector => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   resetModal: () => (/* binding */ resetModal)
 /* harmony export */ });
 /* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpers */ "./src/js/modules/helpers.js");
 
+let activeModal;
 let btnPressed = false;
 const modals = () => {
   bindModal(".button-design", ".popup-design", ".popup-design .popup-close");
@@ -530,11 +535,15 @@ function setModal(modal) {
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
   document.body.style.marginRight = `${scroll}px`;
+  activeModal = modal;
 }
-function resetModal(modal) {
-  modal.style.display = "none";
-  document.body.style.overflow = "";
-  document.body.style.marginRight = `0px`;
+function resetModal() {
+  if (activeModal) {
+    activeModal.style.display = "none";
+    document.body.style.overflow = "";
+    document.body.style.marginRight = `0px`;
+    activeModal = "";
+  }
 }
 function showModalByTime(selector, time) {
   setTimeout(function () {

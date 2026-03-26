@@ -1,4 +1,5 @@
 import { calcScroll } from "./helpers";
+let activeModal;
 
 let btnPressed = false;
 const modals = () => {
@@ -63,12 +64,16 @@ function setModal(modal) {
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
   document.body.style.marginRight = `${scroll}px`;
+  activeModal = modal;
 }
 
-function resetModal(modal) {
-  modal.style.display = "none";
-  document.body.style.overflow = "";
-  document.body.style.marginRight = `0px`;
+export function resetModal() {
+  if (activeModal) {
+    activeModal.style.display = "none";
+    document.body.style.overflow = "";
+    document.body.style.marginRight = `0px`;
+    activeModal = "";
+  }
 }
 
 function showModalByTime(selector, time) {

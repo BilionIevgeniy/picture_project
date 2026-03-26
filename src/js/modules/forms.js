@@ -1,4 +1,5 @@
 import { postData } from "../services/requests";
+import { resetModal } from "./modals";
 
 const message = {
   loading: "Loading...",
@@ -69,6 +70,7 @@ function sentData(form, sentStatus, clearInputs) {
         form.style.display = "block";
         form.classList.remove("fadeOutUp");
         form.classList.add("fadeInUp");
+        resetModal();
       }, 5000);
     });
 }
@@ -80,8 +82,8 @@ function getUrl(form) {
   };
 
   return form.closest(".popup-design") || form.classList.contains("calc_form")
-    ? (api = path.designer)
-    : (api = path.question);
+    ? path.designer
+    : path.question;
 }
 
 function createSentStatus() {
