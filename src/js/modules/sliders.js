@@ -56,9 +56,7 @@ const sliders = (slideSelector, direction, prevSelector, nextSelector) => {
         slides[slideIndex - 1].classList.remove("slideInRight");
         slides[slideIndex - 1].classList.add("slideInLeft");
       });
-    } catch (e) {
-      console.warn(e);
-    }
+    } catch (e) {}
   }
 
   function addSlideEventListeners(direction) {

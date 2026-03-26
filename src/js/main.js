@@ -22,7 +22,7 @@ window.addEventListener("DOMContentLoaded", () => {
     ".main-prev-btn",
     ".main-next-btn",
   );
-  // sliders(".main-slider-item", "vertical");
+  sliders(".main-slider-item", "vertical");
   forms();
   mask('[name="phone"]');
   checkTextInputs('[name="name"]');

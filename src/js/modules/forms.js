@@ -8,80 +8,90 @@ const message = {
   okImg: "assets/img/ok.png",
   failImg: "assets/img/fail.png",
 };
-const path = {
-  designer: "assets/server.php",
-  question: "assets/question.php",
-};
 
 const forms = () => {
-  const form = document.querySelectorAll("form"),
+  const allForms = document.querySelectorAll("form"),
     inputs = document.querySelectorAll("input"),
-    upload = document.querySelectorAll('[name="upload"]');
+    uploads = document.querySelectorAll('[name="upload"]');
 
   const clearInputs = () => {
-    inputs.forEach((item) => {
-      item.value = "";
+    inputs.forEach((input) => {
+      input.value = "";
     });
-    upload.forEach((item) => {
-      item.previousElementSibling.textContent = "File not selected";
+    uploads.forEach((upload) => {
+      upload.previousElementSibling.textContent = "File not selected";
     });
   };
 
-  upload.forEach((item) => {
-    item.addEventListener("input", () => {
+  uploads.forEach((upload) => {
+    upload.addEventListener("input", () => {
       let dots;
-      const arr = item.files[0].name.split(".");
+      const arr = upload.files[0].name.split(".");
       arr[0].length > 6 ? (dots = "...") : (dots = ".");
       const name = arr[0].substring(0, 6) + dots + arr[1];
-      item.previousElementSibling.textContent = name;
+      upload.previousElementSibling.textContent = name;
     });
   });
 
-  form.forEach((item) => {
-    item.addEventListener("submit", (e) => {
+  allForms.forEach((form) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      let statusMessage = createStatusMessage();
-      item.parentNode.appendChild(statusMessage);
-      item.classList.add("animated", "fadeOutUp");
+      let sentStatus = createSentStatus();
+
+      form.parentNode.appendChild(sentStatus.statusMessage);
+      form.classList.add("animated", "fadeOutUp");
 
       setTimeout(() => {
-        item.style.display = "none";
+        form.style.display = "none";
       }, 400);
 
-      const formData = new FormData(item);
-      let api;
-      item.closest(".popup-design") || item.classList.contains("calc_form")
-        ? (api = path.designer)
-        : (api = path.question);
-
-      postData(api, formData)
-        .then((res) => {
-          statusImg.setAttribute("src", message.okImg);
-          textMessage.textContent = message.success;
-        })
-        .catch(() => {
-          statusImg.setAttribute("src", message.failImg);
-          textMessage.textContent = message.failure;
-        })
-        .finally(() => {
-          clearInputs();
-          setTimeout(() => {
-            statusMessage.remove();
-            item.style.display = "block";
-            item.classList.remove("fadeOutUp");
-            item.classList.add("fadeInUp");
-          }, 5000);
-        });
+      sentData(form, sentStatus, clearInputs);
     });
   });
 };
 
-function createStatusMessage() {
+function sentData(form, sentStatus, clearInputs) {
+  const formData = new FormData(form);
+
+  postData(getUrl(form), formData)
+    .then((res) => {
+      sentStatus.statusImg.setAttribute("src", message.okImg);
+      sentStatus.statusText.textContent = message.success;
+    })
+    .catch(() => {
+      sentStatus.statusImg.setAttribute("src", message.failImg);
+      sentStatus.statusText.textContent = message.failure;
+    })
+    .finally(() => {
+      clearInputs();
+      setTimeout(() => {
+        sentStatus.statusMessage.remove();
+        form.style.display = "block";
+        form.classList.remove("fadeOutUp");
+        form.classList.add("fadeInUp");
+      }, 5000);
+    });
+}
+
+function getUrl(form) {
+  const path = {
+    designer: "assets/server.php",
+    question: "assets/question.php",
+  };
+
+  return form.closest(".popup-design") || form.classList.contains("calc_form")
+    ? (api = path.designer)
+    : (api = path.question);
+}
+
+function createSentStatus() {
+  let statusText = createTextMessage();
+  let statusImg = createStatusImg();
   let statusMessage = document.createElement("div");
   statusMessage.classList.add("status");
-  statusMessage.appendChild(createStatusImg());
-  statusMessage.appendChild(createTextMessage());
-  return statusMessage;
+  statusMessage.appendChild(statusImg);
+  statusMessage.appendChild(statusText);
+  return { statusText, statusImg, statusMessage };
 }
 
 function createStatusImg() {
@@ -92,9 +102,9 @@ function createStatusImg() {
 }
 
 function createTextMessage() {
-  let textMessage = document.createElement("div");
-  textMessage.textContent = message.loading;
-  return textMessage;
+  let statusText = document.createElement("div");
+  statusText.textContent = message.loading;
+  return statusText;
 }
 
 export default forms;

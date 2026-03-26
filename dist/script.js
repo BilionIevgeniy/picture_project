@@ -294,85 +294,97 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
 
-const forms = () => {
-  // const form = document.querySelectorAll("form"),
-  //   inputs = document.querySelectorAll("input"),
-  //   upload = document.querySelectorAll('[name="upload"]');
-  // const message = {
-  //   loading: "Loading...",
-  //   success: "Thank you! We will contact you soon",
-  //   failure: "Something went wrong...",
-  //   spinner: "assets/img/spinner.gif",
-  //   ok: "assets/img/ok.png",
-  //   fail: "assets/img/fail.png",
-  // };
-  // const path = {
-  //   designer: "assets/server.php",
-  //   question: "assets/question.php",
-  // };
-  // const clearInputs = () => {
-  //   inputs.forEach((item) => {
-  //     item.value = "";
-  //   });
-  //   upload.forEach((item) => {
-  //     item.previousElementSibling.textContent = "File not selected";
-  //   });
-  // };
-  // upload.forEach((item) => {
-  //   item.addEventListener("input", () => {
-  //     console.log(item.files[0]);
-  //     let dots;
-  //     const arr = item.files[0].name.split(".");
-  //     arr[0].length > 6 ? (dots = "...") : (dots = ".");
-  //     const name = arr[0].substring(0, 6) + dots + arr[1];
-  //     item.previousElementSibling.textContent = name;
-  //   });
-  // });
-  // form.forEach((item) => {
-  //   item.addEventListener("submit", (e) => {
-  //     e.preventDefault();
-  //     let statusMessage = document.createElement("div");
-  //     statusMessage.classList.add("status");
-  //     item.parentNode.appendChild(statusMessage);
-  //     item.classList.add("animated", "fadeOutUp");
-  //     setTimeout(() => {
-  //       item.style.display = "none";
-  //     }, 400);
-  //     let statusImg = document.createElement("img");
-  //     statusImg.setAttribute("src", message.spinner);
-  //     statusImg.classList.add("animated", "fadeInUp");
-  //     statusMessage.appendChild(statusImg);
-  //     let textMessage = document.createElement("div");
-  //     textMessage.textContent = message.loading;
-  //     statusMessage.appendChild(textMessage);
-  //     const formData = new FormData(item);
-  //     let api;
-  //     item.closest(".popup-design") || item.classList.contains("calc_form")
-  //       ? (api = path.designer)
-  //       : (api = path.question);
-  //     console.log(api);
-  //     postData(api, formData)
-  //       .then((res) => {
-  //         console.log(res);
-  //         statusImg.setAttribute("src", message.ok);
-  //         textMessage.textContent = message.success;
-  //       })
-  //       .catch(() => {
-  //         statusImg.setAttribute("src", message.fail);
-  //         textMessage.textContent = message.failure;
-  //       })
-  //       .finally(() => {
-  //         clearInputs();
-  //         setTimeout(() => {
-  //           statusMessage.remove();
-  //           item.style.display = "block";
-  //           item.classList.remove("fadeOutUp");
-  //           item.classList.add("fadeInUp");
-  //         }, 5000);
-  //       });
-  //   });
-  // });
+const message = {
+  loading: "Loading...",
+  success: "Thank you! We will contact you soon",
+  failure: "Something went wrong...",
+  spinnerImg: "assets/img/spinner.gif",
+  okImg: "assets/img/ok.png",
+  failImg: "assets/img/fail.png"
 };
+const forms = () => {
+  const allForms = document.querySelectorAll("form"),
+    inputs = document.querySelectorAll("input"),
+    uploads = document.querySelectorAll('[name="upload"]');
+  const clearInputs = () => {
+    inputs.forEach(input => {
+      input.value = "";
+    });
+    uploads.forEach(upload => {
+      upload.previousElementSibling.textContent = "File not selected";
+    });
+  };
+  uploads.forEach(upload => {
+    upload.addEventListener("input", () => {
+      let dots;
+      const arr = upload.files[0].name.split(".");
+      arr[0].length > 6 ? dots = "..." : dots = ".";
+      const name = arr[0].substring(0, 6) + dots + arr[1];
+      upload.previousElementSibling.textContent = name;
+    });
+  });
+  allForms.forEach(form => {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      let sentStatus = createSentStatus();
+      form.parentNode.appendChild(sentStatus.statusMessage);
+      form.classList.add("animated", "fadeOutUp");
+      setTimeout(() => {
+        form.style.display = "none";
+      }, 400);
+      sentData(form, sentStatus, clearInputs);
+    });
+  });
+};
+function sentData(form, sentStatus, clearInputs) {
+  const formData = new FormData(form);
+  (0,_services_requests__WEBPACK_IMPORTED_MODULE_0__.postData)(getUrl(form), formData).then(res => {
+    sentStatus.statusImg.setAttribute("src", message.okImg);
+    sentStatus.statusText.textContent = message.success;
+  }).catch(() => {
+    sentStatus.statusImg.setAttribute("src", message.failImg);
+    sentStatus.statusText.textContent = message.failure;
+  }).finally(() => {
+    clearInputs();
+    setTimeout(() => {
+      sentStatus.statusMessage.remove();
+      form.style.display = "block";
+      form.classList.remove("fadeOutUp");
+      form.classList.add("fadeInUp");
+    }, 5000);
+  });
+}
+function getUrl(form) {
+  const path = {
+    designer: "assets/server.php",
+    question: "assets/question.php"
+  };
+  return form.closest(".popup-design") || form.classList.contains("calc_form") ? api = path.designer : api = path.question;
+}
+function createSentStatus() {
+  let statusText = createTextMessage();
+  let statusImg = createStatusImg();
+  let statusMessage = document.createElement("div");
+  statusMessage.classList.add("status");
+  statusMessage.appendChild(statusImg);
+  statusMessage.appendChild(statusText);
+  return {
+    statusText,
+    statusImg,
+    statusMessage
+  };
+}
+function createStatusImg() {
+  let statusImg = document.createElement("img");
+  statusImg.setAttribute("src", message.spinnerImg);
+  statusImg.classList.add("animated", "fadeInUp");
+  return statusImg;
+}
+function createTextMessage() {
+  let statusText = document.createElement("div");
+  statusText.textContent = message.loading;
+  return statusText;
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forms);
 
 /***/ },
@@ -809,9 +821,7 @@ const sliders = (slideSelector, direction, prevSelector, nextSelector) => {
         slides[slideIndex - 1].classList.remove("slideInRight");
         slides[slideIndex - 1].classList.add("slideInLeft");
       });
-    } catch (e) {
-      console.warn(e);
-    }
+    } catch (e) {}
   }
   function addSlideEventListeners(direction) {
     slides[0].parentNode.addEventListener("mouseenter", () => {
@@ -838,11 +848,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   postData: () => (/* binding */ postData)
 /* harmony export */ });
 const postData = async (url, data) => {
-  let res = await fetch(url, {
-    method: "POST",
-    body: data
+  // let res = await fetch(url, {
+  //     method: "POST",
+  //     body: data
+  // });
+  let promise = new Promise(resolve => {
+    setTimeout(() => {
+      const localData = data;
+      resolve({
+        status: 200,
+        text: () => Promise.resolve(localData)
+      });
+    }, 2000);
   });
-  return await res.text();
+  const res = await promise;
+  const textData = await res.text();
+  return Object.fromEntries(textData.entries());
 };
 const getResource = async url => {
   let res = await fetch(url);
@@ -955,7 +976,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   (0,_modules_modals__WEBPACK_IMPORTED_MODULE_0__["default"])();
   (0,_modules_sliders__WEBPACK_IMPORTED_MODULE_1__["default"])(".feedback-slider-item", "horizontal", ".main-prev-btn", ".main-next-btn");
-  // sliders(".main-slider-item", "vertical");
+  (0,_modules_sliders__WEBPACK_IMPORTED_MODULE_1__["default"])(".main-slider-item", "vertical");
   (0,_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])();
   (0,_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])('[name="phone"]');
   (0,_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="name"]');
