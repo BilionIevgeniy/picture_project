@@ -426,22 +426,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/**
- * Applies a phone number mask to input fields matching the selector.
- * The mask format is "+4 (___) ___ __ __" for Russian phone numbers.
- * @param {string} selector - CSS selector for input elements to apply the mask to.
- */
+// Phone number mask template
+const PHONE_MASK = "+4 (___) ___ __ __";
+// Default digits to use when input is incomplete
+const DEFAULT_DIGITS = "4";
 const mask = selector => {
-  // Phone number mask template
-  const PHONE_MASK = "+4 (___) ___ __ __";
-  // Default digits to use when input is incomplete
-  const DEFAULT_DIGITS = "4";
-
-  /**
-   * Sets the cursor position in the input element.
-   * @param {number} position - The position to set the cursor to.
-   * @param {HTMLElement} element - The input element.
-   */
   const setCursorPosition = (position, element) => {
     element.focus();
     if (element.setSelectionRange) {
@@ -454,11 +443,6 @@ const mask = selector => {
       range.select();
     }
   };
-
-  /**
-   * Applies the mask to the input value based on the event type.
-   * @param {Event} event - The input event.
-   */
   const applyMask = event => {
     const input = event.target;
     const digitsOnly = input.value.replace(/\D/g, "");
