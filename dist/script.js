@@ -41,21 +41,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 const burger = (menuSelector, burgerSelector) => {
-  // const menuElem = document.querySelector(menuSelector),
-  //   burgerElem = document.querySelector(burgerSelector);
-  // menuElem.style.display = "none";
-  // burgerElem.addEventListener("click", () => {
-  //   if (menuElem.style.display == "none" && window.screen.availWidth < 993) {
-  //     menuElem.style.display = "block";
-  //   } else {
-  //     menuElem.style.display = "none";
-  //   }
-  // });
-  // window.addEventListener("resize", () => {
-  //   if (window.screen.availWidth > 992) {
-  //     menuElem.style.display = "none";
-  //   }
-  // });
+  const menuElem = document.querySelector(menuSelector),
+    burgerElem = document.querySelector(burgerSelector);
+  menuElem.style.display = "none";
+  burgerElem.addEventListener("click", () => {
+    if (menuElem.style.display == "none" && window.screen.availWidth < 993) {
+      menuElem.style.display = "block";
+    } else {
+      menuElem.style.display = "none";
+    }
+  });
+  window.addEventListener("resize", () => {
+    if (window.screen.availWidth > 992) {
+      menuElem.style.display = "none";
+    }
+  });
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (burger);
 
