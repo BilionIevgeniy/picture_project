@@ -3,16 +3,24 @@ const postData = async (url, data) => {
   //     method: "POST",
   //     body: data
   // });
-  let promise = new Promise((resolve) => {
+  let promise = new Promise((resolve, rej) => {
     setTimeout(() => {
       const localData = data;
-      resolve({
+      rej({
         status: 200,
         text: () => Promise.resolve(localData),
       });
     }, 2000);
   });
-  const res = await promise;
+
+  let res;
+  try {
+    res = await promise;
+    console.log(res);
+  } catch (error) {
+    console.log(error);
+  }
+
   const textData = await res.text();
 
   return Object.fromEntries(textData.entries());
